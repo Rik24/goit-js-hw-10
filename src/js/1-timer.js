@@ -6,11 +6,11 @@ import 'izitoast/dist/css/iziToast.min.css';
 
 const refs = {
   startButton: document.querySelector('.start-button'),
+  dateInput: document.querySelector('#datetime-picker'),
   timerValueLables: document.querySelectorAll('.timer .value'),
 };
 
 let userSelectedDate;
-let hasTimePassed = true;
 
 refs.startButton.disabled = true;
 
@@ -21,20 +21,14 @@ const options = {
   minuteIncrement: 1,
   onClose(selectedDates) {
     // console.log(selectedDates[0]);
-    if (selectedDates[0] > new Date() && hasTimePassed) {
+    if (selectedDates[0] > new Date()) {
       userSelectedDate = selectedDates[0];
       refs.startButton.disabled = false;
     } else {
       //   alert('Please choose a date in the future');
-      if (hasTimePassed) {
-        iziToast.error({
-          message: 'Please choose a date in the future',
-        });
-      } else {
-        iziToast.warning({
-          message: 'Timer already set!',
-        });
-      }
+      iziToast.error({
+        message: 'Please choose a date in the future',
+      });
       refs.startButton.disabled = true;
     }
   },
@@ -46,7 +40,7 @@ refs.startButton.addEventListener('click', onStartButtonClick);
 
 function onStartButtonClick() {
   refs.startButton.disabled = true;
-  hasTimePassed = false;
+  refs.dateInput.disabled = true;
 
   const leftTime = convertMs(userSelectedDate - new Date());
 
@@ -75,7 +69,7 @@ function onStartButtonClick() {
       minutes.textContent = 59;
       seconds.textContent = 59;
     } else {
-      hasTimePassed = true;
+      refs.dateInput.disabled = false;
       clearInterval(timerId); // Выключить таймер
       iziToast.success({
         message: 'Time has passed!',
